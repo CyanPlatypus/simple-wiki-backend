@@ -1,7 +1,9 @@
 import functools
 import json
 
-import service.service_article as service_article
+from ..service import service_article
+
+from ..authent import auth
 
 #from db import Session, engine, Base
 #from model.article import Article
@@ -17,7 +19,8 @@ bp = Blueprint('articles', __name__, url_prefix='/articles')
 def test_article():
     return '[{ "title" : "nice boy", "author" : "Bob" }]'
 
-@bp.route('/')
+@bp.route('')
+@auth.login_required
 def all_articles():
 
     #Base.metadata.create_all(engine)

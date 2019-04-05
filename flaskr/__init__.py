@@ -2,8 +2,15 @@ import os
 
 from flask import Flask
 from flask_cors import CORS
+from flask_httpauth import HTTPBasicAuth
 
-from . import articles
+from view import articles, users
+
+config = {
+  'ORIGINS': [
+    'http://localhost:4200',  
+    'http://127.0.0.1:4200',  
+  ]  }
 
 def create_app(test_config=None):
     # create and configure the app
@@ -13,9 +20,11 @@ def create_app(test_config=None):
         #DATABASE=os.path.join(app.instance_path, 'flaskr.sqlite'),
     )
 
-    CORS(app)
+    #CORS(app, support_credentials=True)
+    CORS(app, resources={ r'/*': {'origins': config['ORIGINS']}}, supports_credentials=True)
 
     app.register_blueprint(articles.bp)
+    app.register_blueprint(users.bp)
 
     if test_config is None:
         # load the instance config, if it exists, when not testing
