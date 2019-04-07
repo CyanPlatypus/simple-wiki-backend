@@ -1,6 +1,7 @@
 import functools
 import json
 
+from flaskr.dto.dto_article import DtoArticleInfo
 from ..service import service_article
 
 from ..authent import auth
@@ -18,6 +19,11 @@ bp = Blueprint('articles', __name__, url_prefix='/articles')
 @bp.route('/test-article')
 def test_article():
     return '[{ "title" : "nice boy", "author" : "Bob" }]'
+
+@bp.route('/<int:id>')
+@auth.login_required
+def article(id):
+    return service_article.get_article(id)
 
 @bp.route('')
 @auth.login_required
@@ -42,3 +48,19 @@ def all_articles():
     ##session.close()
 
     return service_article.get_articles()
+
+@bp.route('', methods = ['POST'])
+@auth.login_required
+def add_article():
+
+    j_data = request.get_json(force=True)
+    article = service_article.add_article(DtoArticleInfo(j_data['title'], auth.username(), j_data['content']))
+    return json.dumps(article)
+
+@bp.route('/<int:id>', methods = ['PUT'])
+@auth.login_required
+def update_article(id):
+
+    j_data = request.get_json(force=True)
+    article = service_article.update_article(DtoArticleInfo(j_data['title'], auth.username(), j_data['content'], id))
+    return json.dumps(article)

@@ -28,4 +28,22 @@ def get_user_by_name(uname):
     if user is not None:
         return DtoUser(user.name, user.passw)    
     return None
+
+def get_user_db_by_name(uname):
+    session = Session()
+    #user = [ DtoUser(user.name, user.passw) for user in session.query(User).filter(name == uname).first()]
+    user =  session.query(User).filter(User.name == uname).first()
+    session.close()
+    if user is not None:
+        return user
+    return None
+
+def get_user_id_by_name(uname):
+    session = Session()
+    #user = [ DtoUser(user.name, user.passw) for user in session.query(User).filter(name == uname).first()]
+    user =  session.query(User).filter(User.name == uname).first()
+    session.close()
+    if user is not None:
+        return user.id
+    return None
     
