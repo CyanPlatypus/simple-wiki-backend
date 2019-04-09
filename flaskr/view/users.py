@@ -23,8 +23,9 @@ def signup():
     #return '{"stat":"ok"}'
     return ''
 
-@auth.login_required
+
 @bp.route('/signin')
-def signin():
+@auth.login_required
+def signin(): 
     return ''
 

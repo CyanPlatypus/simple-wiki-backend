@@ -8,8 +8,6 @@ from . import service_user
 
 def get_articles():
 
-    fill()
-
     session = Session()
 
     arts = session.query(Article).all()
