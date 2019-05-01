@@ -1,5 +1,6 @@
-from sqlalchemy import Column, String, Integer, Date, ForeignKey, Text
+from sqlalchemy import Column, String, Integer, DateTime, ForeignKey, Text
 from sqlalchemy.orm import relationship
+import datetime
 
 from ..model.user import User
 from ..db import Base
@@ -10,7 +11,7 @@ class Article(Base):
     id = Column(Integer, primary_key=True)
     title = Column(String(128))
     content = Column(Text())
-    #release_date = Column(Date)
+    date = Column(DateTime, default=datetime.datetime.now)
     author_id = Column(Integer, ForeignKey('users.id'))
     author = relationship("User", backref="articles")
 
@@ -21,4 +22,4 @@ class Article(Base):
         self.title = title
         self.author = author
         self.content = content
-        #self.release_date = release_date
+        #self.release_date = datetime.datetime.now()

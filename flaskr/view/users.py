@@ -1,6 +1,6 @@
 import functools
 import json
-from flask import request
+from flask import request, abort
 
 from ..service import service_user
 
@@ -19,7 +19,8 @@ bp = Blueprint('users', __name__#, url_prefix='/signup'
 @bp.route('/signup', methods = ['POST'])
 def signup():
     j_data = request.get_json(force=True)
-    service_user.add_user(DtoUser(j_data['login'], j_data['passw']))    
+    if not service_user.add_user(DtoUser(j_data['login'], j_data['passw'])) :
+        abort(400)
     #return '{"stat":"ok"}'
     return ''
 
@@ -27,5 +28,6 @@ def signup():
 @bp.route('/signin')
 @auth.login_required
 def signin(): 
-    return ''
+    user = service_user.get_user_by_name(auth.username())
+    return json.dumps(user.isAdmin)
 

@@ -54,7 +54,7 @@ def all_articles():
 def add_article():
 
     j_data = request.get_json(force=True)
-    article = service_article.add_article(DtoArticleInfo(j_data['title'], auth.username(), j_data['content']))
+    article = service_article.add_article(DtoArticleInfo(j_data['title'], auth.username(), j_data['content'], None))
     return json.dumps(article)
 
 @bp.route('/<int:id>', methods = ['PUT'])
@@ -62,5 +62,11 @@ def add_article():
 def update_article(id):
 
     j_data = request.get_json(force=True)
-    article = service_article.update_article(DtoArticleInfo(j_data['title'], auth.username(), j_data['content'], id))
+    article = service_article.update_article(DtoArticleInfo(j_data['title'], auth.username(), j_data['content'], None, id))
     return json.dumps(article)
+
+@bp.route('/<int:id>', methods = ['DELETE'])
+@auth.login_required
+def delete_article(id):
+    service_article.delete_article(id, auth.username())
+    return ''

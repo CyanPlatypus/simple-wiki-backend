@@ -6,12 +6,14 @@ from ..model.user import User
 from ..dto.dto_article import DtoArticleInfo
 from . import service_user
 
+import datetime
+
 def get_articles():
 
     session = Session()
 
     arts = session.query(Article).all()
-    arS = json.dumps([( DtoArticleInfo(ob.title, ob.author.name, "", ob.id)).__dict__ for ob in arts])
+    arS = json.dumps([( DtoArticleInfo(ob.title, ob.author.name, "", ob.date, ob.id)).__dict__ for ob in arts],  indent=4, sort_keys=True, default=str)
 
     session.close()
 
@@ -20,7 +22,7 @@ def get_articles():
 def get_article(id):
     session = Session()
     art = session.query(Article).filter(Article.id == id).first()
-    arS = json.dumps((DtoArticleInfo(art.title, art.author.name, art.content, art.id)).__dict__)
+    arS = json.dumps((DtoArticleInfo(art.title, art.author.name, art.content, art.date, art.id)).__dict__, indent=4, sort_keys=True, default=str)
     session.close()
     return arS
 
@@ -40,11 +42,20 @@ def update_article(artDto):
     user = service_user.get_user_db_by_name(artDto.author)
     db_art = session.query(Article).filter(Article.id == artDto.id).first()
     art = Article(artDto.title, user, artDto.content, id=artDto.id)
+    art.date = datetime.datetime.now()
     session.merge(art)
     session.commit()
     art_id = art.id
     session.close()
     return art_id
+
+def delete_article(id, username):
+    session  = Session()
+    user = service_user.get_user_db_by_name(username)
+    if user != None and user.isAdmin:
+        session.query(Article).filter(Article.id == id).delete()
+        session.commit()
+    session.close()
 
 def fill():
     create_db()
